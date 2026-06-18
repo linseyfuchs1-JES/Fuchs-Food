@@ -1,0 +1,948 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fuchs Food</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --saffron:    #E8871A;
+      --saffron-dk: #C46A0A;
+      --cream:      #FDF6EC;
+      --bark:       #3B2A1A;
+      --clay:       #7A4528;
+      --smoke:      #F0E8DC;
+      --ash:        #9C8B7A;
+      --white:      #FFFFFF;
+
+      --radius-sm:  8px;
+      --radius-md:  14px;
+      --radius-lg:  22px;
+
+      --shadow-card: 0 2px 12px rgba(59,42,26,0.10);
+      --shadow-lift: 0 6px 24px rgba(59,42,26,0.18);
+
+      --font-display: 'Playfair Display', Georgia, serif;
+      --font-body:    'Inter', system-ui, sans-serif;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: var(--font-body);
+      background: var(--cream);
+      color: var(--bark);
+      min-height: 100vh;
+    }
+
+    /* ── HEADER ── */
+    header {
+      background: var(--bark);
+      padding: 16px 16px 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .wordmark {
+      font-family: var(--font-display);
+      font-size: 1.5rem;
+      color: var(--saffron);
+      letter-spacing: 0.04em;
+      line-height: 1;
+    }
+
+    .wordmark span {
+      color: var(--cream);
+      font-size: 0.72rem;
+      font-family: var(--font-body);
+      font-weight: 400;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      display: block;
+      margin-top: 2px;
+    }
+
+    /* ── SEARCH ── */
+    .search-wrap {
+      width: 100%;
+      max-width: 560px;
+      display: flex;
+      gap: 8px;
+    }
+
+    #search-input {
+      flex: 1;
+      padding: 11px 16px;
+      border: none;
+      border-radius: var(--radius-lg);
+      font-family: var(--font-body);
+      font-size: 1rem;
+      background: var(--smoke);
+      color: var(--bark);
+      outline: none;
+      transition: box-shadow 0.2s;
+    }
+
+    #search-input:focus { box-shadow: 0 0 0 3px var(--saffron); }
+    #search-input::placeholder { color: var(--ash); }
+
+    #search-btn {
+      padding: 11px 20px;
+      background: var(--saffron);
+      color: var(--white);
+      border: none;
+      border-radius: var(--radius-lg);
+      font-family: var(--font-body);
+      font-weight: 600;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.1s;
+      white-space: nowrap;
+    }
+
+    #search-btn:active { transform: scale(0.97); }
+    #search-btn:hover  { background: var(--saffron-dk); }
+
+    /* ── FILTER ROWS ── */
+    .filter-section {
+      width: 100%;
+      max-width: 560px;
+    }
+
+    .filter-label {
+      font-size: 0.65rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--ash);
+      margin-bottom: 6px;
+      padding-left: 2px;
+    }
+
+    .pill-row {
+      display: flex;
+      gap: 6px;
+      overflow-x: auto;
+      padding-bottom: 2px;
+      scrollbar-width: none;
+    }
+
+    .pill-row::-webkit-scrollbar { display: none; }
+
+    .pill {
+      flex-shrink: 0;
+      padding: 6px 14px;
+      border-radius: var(--radius-lg);
+      border: 1.5px solid rgba(255,255,255,0.18);
+      background: transparent;
+      color: rgba(255,255,255,0.7);
+      font-family: var(--font-body);
+      font-size: 0.8rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 0.18s, color 0.18s, border-color 0.18s;
+      white-space: nowrap;
+    }
+
+    .pill:hover {
+      background: rgba(255,255,255,0.12);
+      color: var(--white);
+    }
+
+    .pill.active {
+      background: var(--saffron);
+      border-color: var(--saffron);
+      color: var(--white);
+    }
+
+    /* ── TABS ── */
+    .tabs {
+      display: flex;
+      gap: 0;
+      background: rgba(255,255,255,0.10);
+      border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+      padding: 4px 4px 0;
+      width: 100%;
+      max-width: 560px;
+      margin-top: 4px;
+    }
+
+    .tab-btn {
+      flex: 1;
+      padding: 8px;
+      background: transparent;
+      border: none;
+      border-radius: var(--radius-md) var(--radius-md) 0 0;
+      font-family: var(--font-body);
+      font-size: 0.82rem;
+      font-weight: 500;
+      color: var(--ash);
+      cursor: pointer;
+      transition: background 0.2s, color 0.2s;
+    }
+
+    .tab-btn.active {
+      background: var(--cream);
+      color: var(--bark);
+    }
+
+    /* ── ACTIVE FILTERS BANNER ── */
+    .active-filters {
+      display: none;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      padding: 10px 16px;
+      background: var(--smoke);
+      border-bottom: 1px solid rgba(59,42,26,0.08);
+    }
+
+    .active-filters.visible { display: flex; }
+
+    .filter-chip {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      background: var(--saffron);
+      color: var(--white);
+      border-radius: var(--radius-lg);
+      padding: 4px 10px 4px 12px;
+      font-size: 0.78rem;
+      font-weight: 500;
+    }
+
+    .filter-chip button {
+      background: none;
+      border: none;
+      color: var(--white);
+      cursor: pointer;
+      font-size: 0.9rem;
+      line-height: 1;
+      padding: 0;
+      opacity: 0.8;
+    }
+
+    .clear-all {
+      font-size: 0.75rem;
+      color: var(--ash);
+      background: none;
+      border: none;
+      cursor: pointer;
+      text-decoration: underline;
+      margin-left: auto;
+    }
+
+    /* ── MAIN ── */
+    main {
+      padding: 18px 16px;
+      max-width: 640px;
+      margin: 0 auto;
+    }
+
+    .state-msg {
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--ash);
+    }
+
+    .state-msg .icon { font-size: 3rem; margin-bottom: 12px; }
+
+    .state-msg h2 {
+      font-family: var(--font-display);
+      font-size: 1.4rem;
+      color: var(--clay);
+      margin-bottom: 6px;
+    }
+
+    .state-msg p { font-size: 0.9rem; line-height: 1.5; }
+
+    .results-meta {
+      font-size: 0.78rem;
+      color: var(--ash);
+      margin-bottom: 14px;
+      font-weight: 500;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    /* ── CARDS ── */
+    .card-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    @media (max-width: 360px) { .card-grid { grid-template-columns: 1fr; } }
+
+    .recipe-card {
+      background: var(--white);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      box-shadow: var(--shadow-card);
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+      position: relative;
+    }
+
+    .recipe-card:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--shadow-lift);
+    }
+
+    .recipe-card img {
+      width: 100%;
+      aspect-ratio: 4/3;
+      object-fit: cover;
+      display: block;
+    }
+
+    .card-body { padding: 10px 12px 12px; }
+
+    .card-name {
+      font-family: var(--font-display);
+      font-size: 0.95rem;
+      line-height: 1.3;
+      color: var(--bark);
+      margin-bottom: 4px;
+    }
+
+    .card-category {
+      font-size: 0.7rem;
+      color: var(--ash);
+      font-weight: 500;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .save-btn {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      background: rgba(255,255,255,0.92);
+      border: none;
+      border-radius: 50%;
+      width: 34px;
+      height: 34px;
+      font-size: 1.1rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 1px 6px rgba(0,0,0,0.15);
+      transition: transform 0.15s;
+    }
+
+    .save-btn:active { transform: scale(0.88); }
+
+    /* ── MODAL ── */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(59,42,26,0.55);
+      z-index: 200;
+      overflow-y: auto;
+      padding: 20px 12px 40px;
+    }
+
+    .modal-overlay.open { display: block; }
+
+    .modal {
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      max-width: 560px;
+      margin: 0 auto;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .modal-img {
+      width: 100%;
+      max-height: 240px;
+      object-fit: cover;
+      display: block;
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      background: rgba(255,255,255,0.92);
+      border: none;
+      border-radius: 50%;
+      width: 36px;
+      height: 36px;
+      font-size: 1.2rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: var(--shadow-card);
+    }
+
+    .modal-body { padding: 20px 20px 28px; }
+
+    .modal-eyebrow {
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--saffron);
+      margin-bottom: 4px;
+    }
+
+    .modal-title {
+      font-family: var(--font-display);
+      font-size: 1.5rem;
+      line-height: 1.2;
+      color: var(--bark);
+      margin-bottom: 16px;
+    }
+
+    .modal-save-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .modal-save-btn {
+      padding: 9px 18px;
+      border: 2px solid var(--saffron);
+      border-radius: var(--radius-lg);
+      background: transparent;
+      color: var(--saffron);
+      font-family: var(--font-body);
+      font-weight: 600;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: background 0.2s, color 0.2s;
+    }
+
+    .modal-save-btn.saved {
+      background: var(--saffron);
+      color: var(--white);
+    }
+
+    .source-link {
+      font-size: 0.82rem;
+      color: var(--ash);
+      text-decoration: none;
+      border-bottom: 1px solid var(--smoke);
+    }
+
+    .source-link:hover { color: var(--clay); }
+
+    .section-label {
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--ash);
+      margin-bottom: 8px;
+      padding-bottom: 6px;
+      border-bottom: 1px solid var(--smoke);
+    }
+
+    .ingredients-list {
+      list-style: none;
+      margin-bottom: 22px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+    }
+
+    .ingredients-list li {
+      font-size: 0.85rem;
+      color: var(--bark);
+      display: flex;
+      gap: 6px;
+      align-items: flex-start;
+    }
+
+    .ingredients-list li::before {
+      content: '·';
+      color: var(--saffron);
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    .instructions {
+      font-size: 0.88rem;
+      line-height: 1.7;
+      color: var(--clay);
+      white-space: pre-line;
+    }
+
+    .spinner {
+      display: flex;
+      justify-content: center;
+      padding: 50px 0;
+    }
+
+    .spinner::after {
+      content: '';
+      width: 36px;
+      height: 36px;
+      border: 3px solid var(--smoke);
+      border-top-color: var(--saffron);
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="wordmark">Fuchs Food <span>Recipe Finder</span></div>
+
+  <div class="search-wrap">
+    <input id="search-input" type="search" placeholder="Search any ingredient or dish…" autocomplete="off" />
+    <button id="search-btn">Search</button>
+  </div>
+
+  <!-- MEAL TYPE FILTER -->
+  <div class="filter-section">
+    <div class="filter-label">Meal type</div>
+    <div class="pill-row" id="meal-pills">
+      <button class="pill" data-meal="Breakfast">🌅 Breakfast</button>
+      <button class="pill" data-meal="__lunch">☀️ Lunch</button>
+      <button class="pill" data-meal="__dinner">🌙 Dinner</button>
+      <button class="pill" data-meal="Side">🥗 Sides</button>
+      <button class="pill" data-meal="Dessert">🍰 Dessert</button>
+      <button class="pill" data-meal="Starter">🥣 Starters</button>
+    </div>
+  </div>
+
+  <!-- CUISINE FILTER -->
+  <div class="filter-section">
+    <div class="filter-label">Cuisine</div>
+    <div class="pill-row" id="cuisine-pills">
+      <span style="color:var(--ash);font-size:.8rem;padding:6px 2px;">Loading…</span>
+    </div>
+  </div>
+
+  <!-- TABS -->
+  <div class="tabs">
+    <button class="tab-btn active" data-tab="search">🔍 Results</button>
+    <button class="tab-btn" data-tab="favorites">❤️ Saved (<span id="fav-count">0</span>)</button>
+  </div>
+</header>
+
+<!-- ACTIVE FILTER CHIPS -->
+<div class="active-filters" id="active-filters"></div>
+
+<main id="main-content">
+  <div class="state-msg">
+    <div class="icon">🍳</div>
+    <h2>What sounds good?</h2>
+    <p>Search a dish, pick a cuisine, or browse by meal type.</p>
+  </div>
+</main>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modal-overlay">
+  <div class="modal">
+    <img class="modal-img" id="modal-img" src="" alt="" />
+    <button class="modal-close" id="modal-close">✕</button>
+    <div class="modal-body">
+      <div class="modal-eyebrow" id="modal-category"></div>
+      <div class="modal-title" id="modal-title"></div>
+      <div class="modal-save-row">
+        <button class="modal-save-btn" id="modal-save-btn">Save Recipe</button>
+        <a class="source-link" id="modal-source" href="#" target="_blank" rel="noopener">View original ↗</a>
+      </div>
+      <div class="section-label">Ingredients</div>
+      <ul class="ingredients-list" id="modal-ingredients"></ul>
+      <div class="section-label">Instructions</div>
+      <div class="instructions" id="modal-instructions"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ── STATE ──
+  let currentTab     = 'search';
+  let lastResults    = [];
+  let currentMeal    = null;
+  let activeMeal     = null;   // selected meal-type pill value
+  let activeCuisine  = null;   // selected cuisine pill value
+  let favorites      = JSON.parse(localStorage.getItem('mise-favorites') || '[]');
+
+  // Lunch = Chicken + Beef + Pasta; Dinner = Lamb + Seafood + Pork + Vegetarian
+  const MEAL_MAP = {
+    '__lunch':  ['Chicken', 'Beef', 'Pasta'],
+    '__dinner': ['Lamb', 'Seafood', 'Pork', 'Vegetarian'],
+  };
+
+  // ── ELEMENTS ──
+  const searchInput   = document.getElementById('search-input');
+  const searchBtn     = document.getElementById('search-btn');
+  const mainContent   = document.getElementById('main-content');
+  const favCount      = document.getElementById('fav-count');
+  const overlay       = document.getElementById('modal-overlay');
+  const modalClose    = document.getElementById('modal-close');
+  const modalSave     = document.getElementById('modal-save-btn');
+  const activeFilters = document.getElementById('active-filters');
+
+  // ── LOAD CUISINES FROM API ──
+  async function loadCuisines() {
+    try {
+      const res  = await fetch('https://www.themealdb.com/api/json/v1/1/list.php?a=list');
+      const data = await res.json();
+      const areas = (data.meals || []).map(m => m.strArea).sort();
+      const strip = document.getElementById('cuisine-pills');
+      strip.innerHTML = areas.map(a =>
+        `<button class="pill" data-cuisine="${a}">${a}</button>`
+      ).join('');
+      strip.querySelectorAll('.pill').forEach(p =>
+        p.addEventListener('click', () => toggleCuisine(p.dataset.cuisine))
+      );
+    } catch {
+      document.getElementById('cuisine-pills').innerHTML =
+        '<span style="color:var(--ash);font-size:.8rem">Could not load</span>';
+    }
+  }
+
+  // ── MEAL TYPE PILLS ──
+  document.getElementById('meal-pills').querySelectorAll('.pill').forEach(p => {
+    p.addEventListener('click', () => toggleMeal(p.dataset.meal));
+  });
+
+  function toggleMeal(val) {
+    activeMeal = activeMeal === val ? null : val;
+    document.getElementById('meal-pills').querySelectorAll('.pill').forEach(p => {
+      p.classList.toggle('active', p.dataset.meal === activeMeal);
+    });
+    runFilters();
+  }
+
+  function toggleCuisine(val) {
+    activeCuisine = activeCuisine === val ? null : val;
+    document.getElementById('cuisine-pills').querySelectorAll('.pill').forEach(p => {
+      p.classList.toggle('active', p.dataset.cuisine === activeCuisine);
+    });
+    runFilters();
+  }
+
+  // ── ACTIVE FILTER CHIPS BAR ──
+  function renderFilterChips() {
+    const chips = [];
+
+    if (activeMeal) {
+      const label = document.querySelector(`[data-meal="${activeMeal}"]`)?.textContent || activeMeal;
+      chips.push(`
+        <div class="filter-chip">
+          ${label}
+          <button onclick="toggleMeal('${activeMeal}')">✕</button>
+        </div>`);
+    }
+
+    if (activeCuisine) {
+      chips.push(`
+        <div class="filter-chip">
+          ${activeCuisine}
+          <button onclick="toggleCuisine('${activeCuisine}')">✕</button>
+        </div>`);
+    }
+
+    if (chips.length) {
+      activeFilters.innerHTML = chips.join('') +
+        `<button class="clear-all" onclick="clearAllFilters()">Clear all</button>`;
+      activeFilters.classList.add('visible');
+    } else {
+      activeFilters.innerHTML = '';
+      activeFilters.classList.remove('visible');
+    }
+  }
+
+  function clearAllFilters() {
+    activeMeal = null;
+    activeCuisine = null;
+    document.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
+    renderFilterChips();
+    if (searchInput.value.trim()) {
+      doSearch();
+    } else {
+      renderWelcome();
+    }
+  }
+
+  // ── CORE FILTER LOGIC ──
+  async function runFilters() {
+    switchTab('search');
+    renderFilterChips();
+
+    // If no filters and no search term, just show welcome
+    if (!activeMeal && !activeCuisine && !searchInput.value.trim()) {
+      renderWelcome();
+      return;
+    }
+
+    renderLoading();
+
+    try {
+      let results = [];
+
+      if (activeMeal && activeCuisine) {
+        // Both: fetch by each meal category, then filter by cuisine
+        results = await fetchByMealType(activeMeal);
+        results = results.filter(m => m.strArea === activeCuisine);
+      } else if (activeMeal) {
+        results = await fetchByMealType(activeMeal);
+      } else if (activeCuisine) {
+        results = await fetchByCuisine(activeCuisine);
+      }
+
+      // If there's also a search term, further filter by name
+      const q = searchInput.value.trim().toLowerCase();
+      if (q) results = results.filter(m => m.strMeal.toLowerCase().includes(q));
+
+      lastResults = results;
+      renderResults(results, true);
+    } catch {
+      renderError();
+    }
+  }
+
+  // Fetch all meals in a category (or merged categories for lunch/dinner)
+  async function fetchByMealType(mealVal) {
+    const cats = MEAL_MAP[mealVal] ? MEAL_MAP[mealVal] : [mealVal];
+    const all  = await Promise.all(cats.map(async cat => {
+      const res  = await fetch(`https://www.themealdb.com/api/json/v1/1/filter.php?c=${encodeURIComponent(cat)}`);
+      const data = await res.json();
+      return data.meals || [];
+    }));
+    // Flatten + attach strArea if possible (filter endpoint returns minimal data)
+    return all.flat();
+  }
+
+  // Fetch all meals in a cuisine/area
+  async function fetchByCuisine(area) {
+    const res  = await fetch(`https://www.themealdb.com/api/json/v1/1/filter.php?a=${encodeURIComponent(area)}`);
+    const data = await res.json();
+    return data.meals || [];
+  }
+
+  // ── SEARCH ──
+  searchBtn.addEventListener('click', doSearch);
+  searchInput.addEventListener('keydown', e => { if (e.key === 'Enter') doSearch(); });
+
+  async function doSearch() {
+    const q = searchInput.value.trim();
+    if (!q && !activeMeal && !activeCuisine) return;
+
+    // If filters are active, let runFilters handle it
+    if (activeMeal || activeCuisine) { runFilters(); return; }
+
+    switchTab('search');
+    renderLoading();
+    try {
+      const res  = await fetch(`https://www.themealdb.com/api/json/v1/1/search.php?s=${encodeURIComponent(q)}`);
+      const data = await res.json();
+      lastResults = data.meals || [];
+      renderResults(lastResults);
+    } catch {
+      renderError();
+    }
+  }
+
+  // ── TABS ──
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => switchTab(btn.dataset.tab));
+  });
+
+  function switchTab(tab) {
+    currentTab = tab;
+    document.querySelectorAll('.tab-btn').forEach(b =>
+      b.classList.toggle('active', b.dataset.tab === tab));
+    if (tab === 'search') renderResults(lastResults);
+    else renderFavorites();
+  }
+
+  // ── RENDER ──
+  function renderWelcome() {
+    mainContent.innerHTML = `
+      <div class="state-msg">
+        <div class="icon">🍳</div>
+        <h2>What sounds good?</h2>
+        <p>Search a dish, pick a cuisine, or browse by meal type.</p>
+      </div>`;
+  }
+
+  function renderLoading() {
+    mainContent.innerHTML = '<div class="spinner"></div>';
+  }
+
+  function renderError() {
+    mainContent.innerHTML = `
+      <div class="state-msg">
+        <div class="icon">⚠️</div>
+        <h2>Something went wrong</h2>
+        <p>Check your connection and try again.</p>
+      </div>`;
+  }
+
+  function renderResults(meals, fromFilter = false) {
+    updateFavCount();
+    if (!meals || !meals.length) {
+      mainContent.innerHTML = `
+        <div class="state-msg">
+          <div class="icon">🤷</div>
+          <h2>No results found</h2>
+          <p>${fromFilter ? 'Try a different filter combination.' : 'Try a different ingredient or dish name.'}</p>
+        </div>`;
+      return;
+    }
+    mainContent.innerHTML = `
+      <div class="results-meta">${meals.length} recipe${meals.length !== 1 ? 's' : ''} found</div>
+      <div class="card-grid">${meals.map(mealCard).join('')}</div>`;
+    mainContent.querySelectorAll('.recipe-card').forEach(card => {
+      card.addEventListener('click', e => {
+        if (e.target.closest('.save-btn')) return;
+        openModal(card.dataset.id, meals);
+      });
+      card.querySelector('.save-btn').addEventListener('click', () =>
+        toggleFavById(card.dataset.id, meals));
+    });
+  }
+
+  function renderFavorites() {
+    updateFavCount();
+    if (!favorites.length) {
+      mainContent.innerHTML = `
+        <div class="state-msg">
+          <div class="icon">❤️</div>
+          <h2>No saved recipes yet</h2>
+          <p>Search for something and tap 🤍 to save it here.</p>
+        </div>`;
+      return;
+    }
+    mainContent.innerHTML = `
+      <div class="results-meta">${favorites.length} saved recipe${favorites.length !== 1 ? 's' : ''}</div>
+      <div class="card-grid">${favorites.map(mealCard).join('')}</div>`;
+    mainContent.querySelectorAll('.recipe-card').forEach(card => {
+      card.addEventListener('click', e => {
+        if (e.target.closest('.save-btn')) return;
+        openModal(card.dataset.id, favorites);
+      });
+      card.querySelector('.save-btn').addEventListener('click', () => {
+        toggleFavById(card.dataset.id, favorites);
+        renderFavorites();
+      });
+    });
+  }
+
+  function mealCard(meal) {
+    const saved = favorites.some(f => f.idMeal === meal.idMeal);
+    const thumb = meal.strMealThumb
+      ? (meal.strMealThumb.includes('/preview') ? meal.strMealThumb : meal.strMealThumb + '/preview')
+      : '';
+    return `
+      <div class="recipe-card" data-id="${meal.idMeal}">
+        <img src="${thumb}" alt="${meal.strMeal}" loading="lazy" />
+        <div class="card-body">
+          <div class="card-name">${meal.strMeal}</div>
+          <div class="card-category">${meal.strCategory || meal.strArea || ''}</div>
+        </div>
+        <button class="save-btn" title="${saved ? 'Remove' : 'Save'}">${saved ? '❤️' : '🤍'}</button>
+      </div>`;
+  }
+
+  // ── MODAL ──
+  async function openModal(id, pool) {
+    let meal = pool && pool.find(m => m.idMeal === id);
+    // Always fetch full details (filter endpoint returns minimal data)
+    try {
+      const res  = await fetch(`https://www.themealdb.com/api/json/v1/1/lookup.php?i=${id}`);
+      const data = await res.json();
+      if (data.meals?.[0]) meal = data.meals[0];
+    } catch { if (!meal) return; }
+    if (!meal) return;
+
+    currentMeal = meal;
+
+    const ingredients = [];
+    for (let i = 1; i <= 20; i++) {
+      const ing = meal[`strIngredient${i}`];
+      const msr = meal[`strMeasure${i}`];
+      if (ing && ing.trim()) ingredients.push(`${msr ? msr.trim() + ' ' : ''}${ing.trim()}`);
+    }
+
+    document.getElementById('modal-img').src = meal.strMealThumb || '';
+    document.getElementById('modal-img').alt = meal.strMeal;
+    document.getElementById('modal-category').textContent =
+      [meal.strCategory, meal.strArea].filter(Boolean).join(' · ');
+    document.getElementById('modal-title').textContent = meal.strMeal;
+    document.getElementById('modal-instructions').textContent =
+      meal.strInstructions || 'No instructions available.';
+    document.getElementById('modal-source').href =
+      meal.strSource || meal.strYoutube || '#';
+    document.getElementById('modal-ingredients').innerHTML =
+      ingredients.map(i => `<li>${i}</li>`).join('');
+
+    updateModalSaveBtn();
+    overlay.classList.add('open');
+    overlay.scrollTop = 0;
+  }
+
+  modalClose.addEventListener('click', closeModal);
+  overlay.addEventListener('click', e => { if (e.target === overlay) closeModal(); });
+
+  function closeModal() {
+    overlay.classList.remove('open');
+    currentMeal = null;
+  }
+
+  modalSave.addEventListener('click', () => {
+    if (!currentMeal) return;
+    toggleFavById(currentMeal.idMeal, [currentMeal, ...lastResults, ...favorites]);
+    updateModalSaveBtn();
+    if (currentTab === 'search') renderResults(lastResults);
+    else renderFavorites();
+  });
+
+  function updateModalSaveBtn() {
+    if (!currentMeal) return;
+    const saved = favorites.some(f => f.idMeal === currentMeal.idMeal);
+    modalSave.textContent = saved ? '❤️ Saved' : 'Save Recipe';
+    modalSave.classList.toggle('saved', saved);
+  }
+
+  // ── FAVORITES ──
+  function toggleFavById(id, pool) {
+    const idx = favorites.findIndex(f => f.idMeal === id);
+    if (idx > -1) {
+      favorites.splice(idx, 1);
+    } else {
+      const meal = pool && pool.find(m => m.idMeal === id);
+      if (meal) favorites.push(meal);
+    }
+    localStorage.setItem('mise-favorites', JSON.stringify(favorites));
+    updateFavCount();
+    // Refresh card hearts in current view
+    document.querySelectorAll('.recipe-card').forEach(card => {
+      const btn = card.querySelector('.save-btn');
+      const isSaved = favorites.some(f => f.idMeal === card.dataset.id);
+      btn.textContent = isSaved ? '❤️' : '🤍';
+    });
+  }
+
+  function updateFavCount() {
+    favCount.textContent = favorites.length;
+  }
+
+  // ── INIT ──
+  updateFavCount();
+  loadCuisines();
+</script>
+</body>
+</html>
