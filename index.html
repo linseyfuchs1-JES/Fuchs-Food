@@ -109,10 +109,19 @@
     #search-btn:active { transform: scale(0.97); }
     #search-btn:hover  { background: var(--saffron-dk); }
 
-    /* ── FILTER ROWS ── */
-    .filter-section {
+    /* ── FILTER DROPDOWNS ── */
+    .filter-row {
       width: 100%;
       max-width: 560px;
+      display: flex;
+      gap: 10px;
+    }
+
+    .filter-group {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
     }
 
     .filter-label {
@@ -121,43 +130,38 @@
       letter-spacing: 0.1em;
       text-transform: uppercase;
       color: var(--ash);
-      margin-bottom: 6px;
       padding-left: 2px;
     }
 
-    .pill-row {
-      display: flex;
-      gap: 6px;
-      overflow-x: auto;
-      padding-bottom: 2px;
-      scrollbar-width: none;
-    }
-
-    .pill-row::-webkit-scrollbar { display: none; }
-
-    .pill {
-      flex-shrink: 0;
-      padding: 6px 14px;
+    .filter-select {
+      width: 100%;
+      padding: 9px 32px 9px 12px;
+      border: none;
       border-radius: var(--radius-lg);
-      border: 1.5px solid rgba(255,255,255,0.18);
-      background: transparent;
-      color: rgba(255,255,255,0.7);
       font-family: var(--font-body);
-      font-size: 0.8rem;
+      font-size: 0.88rem;
       font-weight: 500;
+      background: rgba(255,255,255,0.12);
+      color: var(--white);
       cursor: pointer;
-      transition: background 0.18s, color 0.18s, border-color 0.18s;
-      white-space: nowrap;
+      outline: none;
+      appearance: none;
+      -webkit-appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23E8871A' stroke-width='1.8' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+      transition: background-color 0.2s;
     }
 
-    .pill:hover {
-      background: rgba(255,255,255,0.12);
+    .filter-select:focus { box-shadow: 0 0 0 2px var(--saffron); }
+
+    .filter-select option {
+      background: var(--bark);
       color: var(--white);
     }
 
-    .pill.active {
-      background: var(--saffron);
-      border-color: var(--saffron);
+    .filter-select.active {
+      background-color: var(--saffron);
       color: var(--white);
     }
 
@@ -509,24 +513,54 @@
     <button id="search-btn">Search</button>
   </div>
 
-  <!-- MEAL TYPE FILTER -->
-  <div class="filter-section">
-    <div class="filter-label">Meal type</div>
-    <div class="pill-row" id="meal-pills">
-      <button class="pill" data-meal="Breakfast">🌅 Breakfast</button>
-      <button class="pill" data-meal="__lunch">☀️ Lunch</button>
-      <button class="pill" data-meal="__dinner">🌙 Dinner</button>
-      <button class="pill" data-meal="Side">🥗 Sides</button>
-      <button class="pill" data-meal="Dessert">🍰 Dessert</button>
-      <button class="pill" data-meal="Starter">🥣 Starters</button>
+  <!-- FILTER DROPDOWNS -->
+  <div class="filter-row">
+    <div class="filter-group">
+      <div class="filter-label">Meal type</div>
+      <select class="filter-select" id="meal-select">
+        <option value="">Any meal</option>
+        <option value="Breakfast">🌅 Breakfast</option>
+        <option value="__lunch">☀️ Lunch</option>
+        <option value="__dinner">🌙 Dinner</option>
+        <option value="Side">🥗 Sides</option>
+        <option value="Dessert">🍰 Dessert</option>
+        <option value="Starter">🥣 Starters</option>
+      </select>
     </div>
-  </div>
-
-  <!-- CUISINE FILTER -->
-  <div class="filter-section">
-    <div class="filter-label">Cuisine</div>
-    <div class="pill-row" id="cuisine-pills">
-      <span style="color:var(--ash);font-size:.8rem;padding:6px 2px;">Loading…</span>
+    <div class="filter-group">
+      <div class="filter-label">Cuisine</div>
+      <select class="filter-select" id="cuisine-select">
+        <option value="">Any cuisine</option>
+        <option value="American">🇺🇸 American</option>
+        <option value="British">🇬🇧 British</option>
+        <option value="Canadian">🇨🇦 Canadian</option>
+        <option value="Chinese">🇨🇳 Chinese</option>
+        <option value="Croatian">🇭🇷 Croatian</option>
+        <option value="Dutch">🇳🇱 Dutch</option>
+        <option value="Egyptian">🇪🇬 Egyptian</option>
+        <option value="Filipino">🇵🇭 Filipino</option>
+        <option value="French">🇫🇷 French</option>
+        <option value="Greek">🇬🇷 Greek</option>
+        <option value="Indian">🇮🇳 Indian</option>
+        <option value="Irish">🇮🇪 Irish</option>
+        <option value="Italian">🇮🇹 Italian</option>
+        <option value="Jamaican">🇯🇲 Jamaican</option>
+        <option value="Japanese">🇯🇵 Japanese</option>
+        <option value="Kenyan">🇰🇪 Kenyan</option>
+        <option value="Malaysian">🇲🇾 Malaysian</option>
+        <option value="Mexican">🇲🇽 Mexican</option>
+        <option value="Moroccan">🇲🇦 Moroccan</option>
+        <option value="Polish">🇵🇱 Polish</option>
+        <option value="Portuguese">🇵🇹 Portuguese</option>
+        <option value="Russian">🇷🇺 Russian</option>
+        <option value="Spanish">🇪🇸 Spanish</option>
+        <option value="Thai">🇹🇭 Thai</option>
+        <option value="Tunisian">🇹🇳 Tunisian</option>
+        <option value="Turkish">🇹🇷 Turkish</option>
+        <option value="Ukrainian">🇺🇦 Ukrainian</option>
+        <option value="Unknown">🌍 Other</option>
+        <option value="Vietnamese">🇻🇳 Vietnamese</option>
+      </select>
     </div>
   </div>
 
@@ -593,43 +627,33 @@
   const modalSave     = document.getElementById('modal-save-btn');
   const activeFilters = document.getElementById('active-filters');
 
-  // ── LOAD CUISINES FROM API ──
-  async function loadCuisines() {
-    try {
-      const res  = await fetch('https://www.themealdb.com/api/json/v1/1/list.php?a=list');
-      const data = await res.json();
-      const areas = (data.meals || []).map(m => m.strArea).sort();
-      const strip = document.getElementById('cuisine-pills');
-      strip.innerHTML = areas.map(a =>
-        `<button class="pill" data-cuisine="${a}">${a}</button>`
-      ).join('');
-      strip.querySelectorAll('.pill').forEach(p =>
-        p.addEventListener('click', () => toggleCuisine(p.dataset.cuisine))
-      );
-    } catch {
-      document.getElementById('cuisine-pills').innerHTML =
-        '<span style="color:var(--ash);font-size:.8rem">Could not load</span>';
-    }
-  }
 
-  // ── MEAL TYPE PILLS ──
-  document.getElementById('meal-pills').querySelectorAll('.pill').forEach(p => {
-    p.addEventListener('click', () => toggleMeal(p.dataset.meal));
+  // ── FILTER DROPDOWNS ──
+  document.getElementById('meal-select').addEventListener('change', function() {
+    activeMeal = this.value || null;
+    this.classList.toggle('active', !!this.value);
+    runFilters();
+  });
+
+  document.getElementById('cuisine-select').addEventListener('change', function() {
+    activeCuisine = this.value || null;
+    this.classList.toggle('active', !!this.value);
+    runFilters();
   });
 
   function toggleMeal(val) {
-    activeMeal = activeMeal === val ? null : val;
-    document.getElementById('meal-pills').querySelectorAll('.pill').forEach(p => {
-      p.classList.toggle('active', p.dataset.meal === activeMeal);
-    });
+    activeMeal = val || null;
+    const sel = document.getElementById('meal-select');
+    sel.value = val || '';
+    sel.classList.toggle('active', !!val);
     runFilters();
   }
 
   function toggleCuisine(val) {
-    activeCuisine = activeCuisine === val ? null : val;
-    document.getElementById('cuisine-pills').querySelectorAll('.pill').forEach(p => {
-      p.classList.toggle('active', p.dataset.cuisine === activeCuisine);
-    });
+    activeCuisine = val || null;
+    const sel = document.getElementById('cuisine-select');
+    sel.value = val || '';
+    sel.classList.toggle('active', !!val);
     runFilters();
   }
 
@@ -638,19 +662,22 @@
     const chips = [];
 
     if (activeMeal) {
-      const label = document.querySelector(`[data-meal="${activeMeal}"]`)?.textContent || activeMeal;
+      const sel = document.getElementById('meal-select');
+      const label = sel.options[sel.selectedIndex]?.text || activeMeal;
       chips.push(`
         <div class="filter-chip">
           ${label}
-          <button onclick="toggleMeal('${activeMeal}')">✕</button>
+          <button onclick="toggleMeal('')">✕</button>
         </div>`);
     }
 
     if (activeCuisine) {
+      const sel = document.getElementById('cuisine-select');
+      const label = sel.options[sel.selectedIndex]?.text || activeCuisine;
       chips.push(`
         <div class="filter-chip">
-          ${activeCuisine}
-          <button onclick="toggleCuisine('${activeCuisine}')">✕</button>
+          ${label}
+          <button onclick="toggleCuisine('')">✕</button>
         </div>`);
     }
 
@@ -667,7 +694,10 @@
   function clearAllFilters() {
     activeMeal = null;
     activeCuisine = null;
-    document.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
+    document.getElementById('meal-select').value = '';
+    document.getElementById('meal-select').classList.remove('active');
+    document.getElementById('cuisine-select').value = '';
+    document.getElementById('cuisine-select').classList.remove('active');
     renderFilterChips();
     if (searchInput.value.trim()) {
       doSearch();
@@ -942,7 +972,6 @@
 
   // ── INIT ──
   updateFavCount();
-  loadCuisines();
 </script>
 </body>
 </html>
